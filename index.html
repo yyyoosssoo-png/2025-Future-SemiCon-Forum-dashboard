@@ -1119,6 +1119,13 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Footer for HRD tab only -->
+            <div style="background: rgba(20, 16, 36, 0.9); color: #C6C2F4; padding: 40px 20px; text-align: center; border-top: 2px solid rgba(119, 112, 230, 0.2); margin-top: 60px; border-radius: 15px;">
+                <div style="font-size: 14px; font-style: italic; line-height: 1.8;">
+                    본 내용은 2025 미래반도체 포럼 참여 후 설문지를 작성한 59명의 구성원의 응답에 기반하여 도출하였습니다.
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1279,13 +1286,6 @@
             <div class="modal-quotes" id="modalQuotes"></div>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-text">
-            본 내용은 2025 미래반도체 포럼 참여 후 설문지를 작성한 59명의 구성원의 응답에 기반하여 도출하였습니다.
-        </div>
-    </footer>
 
     <script>
         // Create stars
@@ -1503,22 +1503,15 @@
                             datasets: [{
                                 label: '실제 평가',
                                 data: [4.3, 4.6, 4.6, 4.7, 4.6, 4.6],
-                                backgroundColor: 'rgba(119, 112, 230, 0.2)',
+                                backgroundColor: 'transparent',
                                 borderColor: '#7770E6',
                                 pointBackgroundColor: '#7770E6',
                                 pointBorderColor: '#fff',
                                 pointHoverBackgroundColor: '#fff',
                                 pointHoverBorderColor: '#7770E6',
                                 borderWidth: 3,
-                                pointRadius: 6
-                            }, {
-                                label: '목표 기준',
-                                data: [4.0, 4.0, 4.0, 4.0, 4.0, 4.0],
-                                backgroundColor: 'rgba(41, 31, 178, 0.1)',
-                                borderColor: 'rgba(41, 31, 178, 0.5)',
-                                borderDash: [5, 5],
-                                pointRadius: 0,
-                                borderWidth: 2
+                                pointRadius: 8,
+                                pointHoverRadius: 10
                             }]
                         },
                         options: {
@@ -1534,7 +1527,8 @@
                                         font: {
                                             size: 12
                                         },
-                                        color: '#C6C2F4'
+                                        color: '#C6C2F4',
+                                        backdropColor: 'transparent'
                                     },
                                     pointLabels: {
                                         font: {
@@ -1544,26 +1538,48 @@
                                         color: '#EBE9FB'
                                     },
                                     grid: {
-                                        color: 'rgba(119, 112, 230, 0.2)'
+                                        color: 'rgba(119, 112, 230, 0.3)',
+                                        lineWidth: 1
                                     },
                                     angleLines: {
-                                        color: 'rgba(119, 112, 230, 0.2)'
+                                        color: 'rgba(119, 112, 230, 0.3)',
+                                        lineWidth: 1
                                     }
                                 }
                             },
                             plugins: {
                                 legend: {
-                                    display: true,
-                                    position: 'bottom',
-                                    labels: {
-                                        font: {
-                                            size: 12
-                                        },
-                                        color: '#EBE9FB'
-                                    }
+                                    display: false
                                 }
                             }
-                        }
+                        },
+                        plugins: [{
+                            afterDatasetsDraw: function(chart) {
+                                const ctx = chart.ctx;
+                                chart.data.datasets.forEach((dataset, i) => {
+                                    const meta = chart.getDatasetMeta(i);
+                                    meta.data.forEach((point, index) => {
+                                        const value = dataset.data[index];
+                                        ctx.fillStyle = '#EBE9FB';
+                                        ctx.font = 'bold 14px Segoe UI';
+                                        ctx.textAlign = 'center';
+                                        ctx.textBaseline = 'middle';
+                                        
+                                        // Calculate position inside the polygon
+                                        const angle = chart.scales.r.getPointLabelPosition(index, 10);
+                                        const centerX = chart.scales.r.xCenter;
+                                        const centerY = chart.scales.r.yCenter;
+                                        const distance = chart.scales.r.getDistanceFromCenterForValue(value);
+                                        
+                                        // Position text slightly towards center (70% of the distance)
+                                        const x = centerX + Math.cos(angle.angle) * distance * 0.7;
+                                        const y = centerY + Math.sin(angle.angle) * distance * 0.7;
+                                        
+                                        ctx.fillText(value.toFixed(1), x, y);
+                                    });
+                                });
+                            }
+                        }]
                     });
                     if (radarLoading) radarLoading.style.display = 'none';
                 }
@@ -1576,12 +1592,12 @@
                         type: 'bar',
                         data: {
                             labels: [
-                                'Speech 1\nMarvell Korea',
-                                'Speech 2\nAWS',
-                                'Speech 3\nSK이노베이션',
-                                'Speech 4\nSK증권',
-                                'Discussion 1',
-                                'Discussion 2'
+                                ['Speech1 Marvell', 'Architecting the Next AI Chip'],
+                                ['Speech2 AWS', 'Next Wave of AI Platform'],
+                                ['Speech3 SK이노베이션', 'Energy for AI Computing Infra'],
+                                ['Speech4 SK증권', 'Future Paradigms of AI Chips'],
+                                ['Discussion1', 'Future of AI Architecture', '효율과 Scale-up의 최전선'],
+                                ['Discussion2', 'beyond HBM', '메모리 반도체, Next를 위한 도약']
                             ],
                             datasets: [{
                                 label: '평균 만족도',
@@ -1622,7 +1638,7 @@
                                 y: {
                                     ticks: {
                                         font: {
-                                            size: 11,
+                                            size: 10,
                                             weight: 'bold'
                                         },
                                         color: '#EBE9FB'
